@@ -36,78 +36,67 @@ Advisor: Prof. Eric RENAULT
 
 \section{Introduction}
 
-%Introducci�n a la propuesta de Monograf�a. Debe incluir un breve resumen del estado del arte del problema a tratar. Tambi�n deben aparecer citadas todas las referencias de la bibliograf�a (a menos de que se citen m�s adelante, en los objetivos o metodolog�a, por ejemplo)
+The enigma machine is a cipher machine used by the Nazi Germany during World War II in order to send secret coded messages. It was initially a commercial machine bought by banks are businesses. But then the military took it and added an extra security layer called plugboard. It was innovative at the time because it was not a substitution cipher, i.e. the same letter can get different results after encryption. \\
 
-Aqu\'i texto.
+The machine works by a combination of moving rotors and inside wiring as seen in Fig. {fig:machine}. The way to use it is that when the sender types a message, a bulb lights up indicating the correspondent coded letter. Then, in order to decode, the receiver types the coded message he received and the initial message lights up on the board. In war times the coded messages were transmitted over morse code. \\
 
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{img/machine}
+	\caption{Enigma Machine - Military Edition}
+	\label{fig:machine}
+\end{figure}
+
+In the military version of the Enigma Machine there were 5 possible rotors to pick from, each with 26 possible positions, then there were 10 possible switching in the plugboard that could choose a pair from the available 26 letters. That accounts for $158962555217826360000$ different combinations for
+the setting of the army Enigma Machine \cite{numberphile1}. The initial setting for each day was given to the bases in a sheet of paper that had the monthly configurations of the machine. So they changed the setting everyday. \\
+
+So in order to decipher the code, you needed either to have the code sheet or to break the message. This latter was what the scientists at Bletchley Park did; and what I will try to recreate in this project. 
 
 \section{General Goal}
 
-%Objetivo general del trabajo. Empieza con un verbo en infinitivo.
-
-Aqu\'i texto.
+To understand the code breaking process behind the enigma cipher.
 
 
 \section{Specific Goals}
 
-%Objetivos espec�ficos del trabajo. Empiezan con un verbo en infinitivo.
-
 \begin{itemize}
-	\item Objetivo 1
-	\item Objetivo 2
-	\item Objetivo 3
-	\item ...
+	\item To implement the Enigma machine with software
+	\item To implement the Bombe machine that breaks the Enigma cipher
+	\item To understand the mathematical and probabilistic techniques used to break a cipher with limited time and computational resources. 
+	\item To understand the weaknesses exploited that allowed to break the Enigma cipher
 \end{itemize}
+
 
 \section{Methodology}
 
-%Exponer DETALLADAMENTE la metodolog�a que se usar� en la Monograf�a. 
+I will create 2 different programs within the same project: 
 
-%Monograf�a te�rica o computacional: �C�mo se har�n los c�lculos te�ricos? �C�mo se har�n las simulaciones? �Qu� requerimientos computacionales se necesitan? �Qu� espacios f�sicos o virtuales se van a utilizar?
+\begin{enumerate}
+	\item The Enigma machine 
+	\item The Bombe machine
+\end{enumerate}
 
-%Monograf�a experimental: Recordar que para ser aprobada, los aparatos e insumos experimentales que se usar�n en la Monograf�a deben estar previamente disponibles en la Universidad, o garantizar su disponibilidad para el tiempo en el que se realizar� la misma. �Qu� montajes experimentales se van a usar y que material se requiere? �En qu� espacio f�sico se llevar�n a cabo los experimentos? Si se usan aparatos externos, �qu� permisos se necesitan? Si hay que realizar pagos a terceros, �c�mo se financiar� esto?
+The implementation of both will be in Python and it will be publicly available in the GitHub repository \url{https://github.com/mariacamilarg/enigma_bombe}. As for the computational resources, I will need only my personal computer (with Linux O.S.) with standard architecture.
 
-Aqu\'i texto.
 
 \section{Work Schedule}
 
-\begin{table}[htb]
-	\begin{tabular}{|c|cccccccccccccccc| }
-	\hline
-	Tareas $\backslash$ Semanas & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16  \\
-	\hline
-	1 & X & X &   &   &   &   &   & X & X &   &   &   &   &   &   &   \\
-	2 &   & X & X &   & X & X & X &   &   & X & X & X &   & X & X &   \\
-	3 &   &   &   & X &   &   &   & X &   &   &   & X &   &   & X &   \\
-	4 & X & X & X & X & X & X & X & X & X & X &   &   &   &   &   &   \\
-	5 &   &   &   &   & X &   &   &   & X &   &   & X &   &   & X &   \\
-	\hline
-	\end{tabular}
-\end{table}
-\vspace{1mm}
+This will be the main work of the course Scientific Project with 2.5 ECTS. It will be performed during the course of 2 months approximately, in the time stipulated for the class. The delivery date will be in mid June of 2019.
 
-\begin{itemize}
-	\item Tarea 1: Descripci\'on de la tarea 1
-	\item Tarea 2: Descripci\'on de la tarea 2
-	\item Tarea 3: Descripci\'on de la tarea 3
-	\item ...
-\end{itemize}
 
 \begin{thebibliography}{10}
 
-\bibitem{Jerry} J. Banks. \textit{Discrete-Event System Simulation}. Fourth Edition. Prentice Hall International Series in Industrial and Systems Engineering, pg 86 - 116 y 219 - 235, (2005).
+% https://www.youtube.com/watch?v=G2_Q9FoD-oQ
+\bibitem{numberphile1} Numberphile. \textit{158,962,555,217,826,360,000 (Enigma Machine)}. YouTube (2013).
 
-\bibitem{Bronner} P. Bronner, A. Strunz, C. Silberhorn \& J.P. Meyn. European Journal of Physics, \textbf{30}, 1189-1200, (2009).
-
-\bibitem{LabInt} P. D�az \& N. Barbosa: \textit{Obtenci�n de n�meros aleatorios}. Informe final del curso Laboratorio Intermedio. Universidad de Los Andes, Bogot�, Colombia, (2012).
-
-\bibitem{Stefannov} A. Stefanov , N. Gisin , O. Guinnard , L. Guinnard \& H. Zbinden. Journal of Modern Optics, \textbf{47}:4, 595-598, (2000).
+\bibitem{hodges} A. Hodges. \textit{Alan Turing: The Enigma}. Princeton, N.J: Princeton University Press (2012). 
 
 \end{thebibliography}
 
+\vspace{2cm}
 \section*{Advisor Signature}
-\vspace{1.5cm}
 
+\vspace{2cm}
 \section*{Student Signature}
 
 \end{document} 
