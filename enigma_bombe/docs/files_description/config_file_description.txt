@@ -1,0 +1,7 @@
+number of rotors n (ex: 3)
+which rotors (ex: V IV I)
+initial ring settings of rotors (ex: A A A) - Ringstellung
+initial offsets of rotors (ex: D Y A) - Grundstellung
+number of pairs p in plugboard (ex: 10)
+letter pairs separated by space (ex: DI ZL RX UH QK PC VY GA SO EM)
+which reflector (ex: C)

@@ -8,14 +8,14 @@ ex_text_filename = "example_text.txt"
 # creating machine
 enigma_machine = EnigmaMachine(ex_path+ex_config_filename)
 
-print(enigma_machine.rotor_offsets)
-
 # text to cipher
 text = ""
 with open(ex_path+ex_text_filename) as file: 
     text = file.read()
-print(text)
+print("CLEAR TEXT:")
+print(text + "\n")
 
 # cipher it
 ciphered_text = enigma_machine.cipher_text(text)
+print("CIPHERED TEXT:")
 print(ciphered_text)
