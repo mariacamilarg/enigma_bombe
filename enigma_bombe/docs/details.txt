@@ -1,5 +1,5 @@
 ENIGMA:
 
-- I chose the model M3 & M4 Naval (FEB 1942) http://enigma.louisedade.co.uk/howitworks.html that has 8 possible rotors https://en.wikipedia.org/wiki/Enigma_rotor_details and I allow a variable number of rotors in the machine.
 - I'm not using the last part of the code sheet (Kenngruppen) for now. More info here: http://users.telenet.be/d.rijmenants/en/enigmaproc.htm and http://cryptocellar.org/bgac/KM-IndicatingSystem.pdf
 - Reflectors from this website: http://users.telenet.be/d.rijmenants/en/enigmatech.htm#reflector
+- Example: https://www.codesandciphers.org.uk/enigma/example1.htm

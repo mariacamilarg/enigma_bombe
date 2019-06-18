@@ -5,7 +5,7 @@
 \usepackage[english]{babel}
 \usepackage[latin5]{inputenc}
 \usepackage{hyperref}
-\usepackage[left=3cm,top=3cm,right=3cm,nohead,nofoot]{geometry}
+\usepackage[left=3cm,top=3cm,right=3cm,bottom=2cm,nohead,nofoot]{geometry}
 \usepackage{datenumber}
 
 \begin{document}
@@ -70,34 +70,63 @@ To understand the code breaking process behind the enigma cipher.
 
 \section{Methodology}
 
-I will create 2 different programs within the same project: 
+I created 2 different programs within the same project: 
 
 \begin{enumerate}
 	\item The Enigma machine 
 	\item The Bombe machine
 \end{enumerate}
 
-The implementation of both will be in Python and it will be publicly available in the GitHub repository \url{https://github.com/mariacamilarg/enigma_bombe}. As for the computational resources, I will need only my personal computer (with Linux O.S.) with standard architecture.
+The implementation of both is in Python and it is be publicly available in the GitHub repository \url{https://github.com/mariacamilarg/enigma_bombe}. As for the computational resources, I used only my personal computer (running a Linux O.S.) with standard architecture.
 
 
-\section{Work Schedule}
+\section{Results}
 
-This will be the main work of the course Scientific Project with 2.5 ECTS. It will be performed during the course of 2 months approximately, in the time stipulated for the class. The delivery date will be in mid June of 2019.
+\subsection{Enigma Machine}
+
+There are different models of the Enigma machine that were developed through time. In this project I chose one of the latest, i.e. with more complicated settings. This is the model M3 \& M4 Naval (from Frebuary 1942) that has 8 possible rotors \cite{dade,wikirotors}. 
+
+\subsubsection{Input}
+
+\subsubsection{Processing}
+
+\subsubsection{Output}
+
+\subsubsection{Challenges}
+
+The biggest challenge in implementing the Enigma machine is knowing exactly how it worked. Even thought there is a great amount of information online, the depth of it is not that significant. Most of the resources tend to shallowly explain the behavior but there are several subtleties and details that were hard to find. I put in the references the most trustworthy and complete information I found on the matter \cite{rijmenants,sale,cryptomuseum,wiki,wikicryptanalysis,ellsbury}. \\
+
+Another challenge was the translation of this information, because the original machine settings are in German. This implies that there are multiple acceptable translations for several parts of the machine that might be opposite among different sources. A concrete example of this goes within the rotor, where there are 2 different settings called \textit{Ringstellung} and \textit{Grundstellung}. They refer to the ring setting within each the rotor and to the ground setting or offset of the rotor within the machine, respectively. However figuring out which one was which presented a problem because different sources referred to them by different names, sometimes even opposite. So I had to solve this by recurring to the German words. \\
+
+Finally, I would like to refer as well to different simulators that are found on the internet in which I could get a phenomenological understanding of the machine. I was able to try out different configurations and learning its way to function. I also confirmed my solution against these simulators in order to test my implementation. This was a positive match. 
+
+\begin{itemize}
+	\item Cryptii Simulator: \url{https://cryptii.com/pipes/enigma-machine}
+	\item Louise Dade Simulator: \url{http://enigma.louisedade.co.uk/enigma.html}
+\end{itemize}
+
+
+\subsection{Bombe Machine}
+
+
 
 
 \begin{thebibliography}{10}
-
-% https://www.youtube.com/watch?v=G2_Q9FoD-oQ
-\bibitem{numberphile1} Numberphile. \textit{158,962,555,217,826,360,000 (Enigma Machine)}. YouTube (2013).
-
-\bibitem{hodges} A. Hodges. \textit{Alan Turing: The Enigma}. Princeton, N.J: Princeton University Press (2012). 
-
+% -- enigma --
+	\bibitem{hodges} A. Hodges. \textit{Alan Turing: The Enigma}. Princeton, N.J: Princeton University Press (2012). 
+	\bibitem{numberphile1} Numberphile. \textit{158,962,555,217,826,360,000 (Enigma Machine)}. YouTube (2013). % https://www.youtube.com/watch?v=G2_Q9FoD-oQ
+	\bibitem{rijmenants} D. Rijmenants. \textit{Technical Details of the Enigma Machine}. Obtained from: \url{http://users.telenet.be/d.rijmenants/en/enigmatech.htm}
+	\bibitem{sale} T. Sale. \textit{Military Use of the Enigma}. Obtained from: \url{https://www.codesandciphers.org.uk/enigma/enigma3.htm}
+	\bibitem{cryptomuseum} Cryptomuseum. \textit{Enigma Cipher Machines}. Obtained from: \url{https://www.cryptomuseum.com/crypto/enigma/index.htm}	
+	\bibitem{wiki} Wikipedia. \textit{Enigma Machine}. Obtained from: \url{https://en.wikipedia.org/wiki/Enigma_machine}
+	\bibitem{wikicryptanalysis} Wikipedia. \textit{Cryptanalysis of the Enigma}. Obtained from: \url{https://en.wikipedia.org/wiki/Cryptanalysis_of_the_Enigma}
+	
+	\bibitem{dade} L. Dade. \textit{Enigma Machine: How It Works}. Obtained from: \url{http://enigma.louisedade.co.uk/howitworks.html}
+	\bibitem{wikirotors} Wikipedia. \textit{Enigma Rotor Details}. Obtained from: \url{https://en.wikipedia.org/wiki/Enigma_rotor_details}
+	
+% -- bombe --
+	\bibitem{ellsbury} G. Ellsbury. \textit{The Enigma and The Bombe}. Obtained from: \url{http://www.ellsbury.com/enigmabombe.htm}
 \end{thebibliography}
 
-\vspace{2cm}
-\section*{Advisor Signature}
-
-\vspace{2cm}
-\section*{Student Signature}
 
 \end{document} 
