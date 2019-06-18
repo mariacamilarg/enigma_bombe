@@ -52,8 +52,16 @@ class Rotor:
 
     def load_config(self, ring_setting_letter, offset_letter):
 
-        self.ring_setting = ALPHABET.index(ring_setting_letter) # TODO: do something with this
+        self.ring_setting = ALPHABET.index(ring_setting_letter) 
         self.position = ALPHABET.index(offset_letter)
+
+        # correct for ring setting (position and turnovers)
+        self.position = (self.position - self.ring_setting) % N_LETTERS
+
+        for i, turnover in enumerate(self.turnovers):
+            new_turnover = (turnover - self.ring_setting) % 26
+            self.turnovers[i] = new_turnover
+
 
     def step(self, turnover=False):
         """
