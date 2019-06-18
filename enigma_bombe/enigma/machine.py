@@ -100,7 +100,6 @@ class Rotor:
 
         return pin_in
 
-
 class EnigmaMachine:
 
     def __init__(self, config_filename):
@@ -221,6 +220,7 @@ class EnigmaMachine:
 
         # enter rotors (inwards - right to left)
         rotor_names_inverted = self.rotor_names[::-1]
+        
         pin_in = ALPHABET.index(plugboard_letter)
 
         for rotor_name in rotor_names_inverted:
@@ -249,6 +249,7 @@ class EnigmaMachine:
         ciphered_text = ""
 
         for letter in text:
+            print(letter)
             ciphered_letter = self.cipher_letter(letter)
             ciphered_text += ciphered_letter
 

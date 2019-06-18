@@ -11,7 +11,7 @@ enigma_machine = EnigmaMachine(ex_path+ex_config_filename)
 # text to cipher
 text = ""
 with open(ex_path+ex_text_filename) as file: 
-    text = file.read()
+    text = file.read().splitlines()[0]
 print("CLEAR TEXT:")
 print(text + "\n")
 
