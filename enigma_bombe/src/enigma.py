@@ -275,16 +275,12 @@ class EnigmaMachine:
               (self.rotors['IV'].position + self.rotors['IV'].ring_setting) % N_LETTERS, 
               (self.rotors['I'].position + self.rotors['I'].ring_setting) % N_LETTERS)
         '''
-        
+
         return ciphered_letter
     
     
-    def cipher_letter_bombe(self, letter, cipher_offset):
+    def cipher_letter_bombe(self, letter):
 
-        # advance rotors
-        for i in range(cipher_offset + 1):
-            self.step_rotors()
-        
         # enter rotors (inwards - right to left)
         rotor_names_inverted = self.rotor_names[::-1]
         

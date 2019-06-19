@@ -111,8 +111,8 @@ class BombeMachine:
 
         for rotor_positions in rotor_positions_combinations:
 
-            rotor_positions =  "DFU"
-            print("ROTOR POSITIONS: {}\n".format(rotor_positions))
+            #rotor_positions =  "DFU"
+            #print("ROTOR POSITIONS: {}\n".format(rotor_positions))
 
             # impossible plugboard connections
             self.contradictions = defaultdict()
@@ -124,11 +124,13 @@ class BombeMachine:
                 plugboard[guess] = self.paths_input
                 plugboard_possible = True
 
-                print("Guess: P({})={}".format(self.paths_input, guess))
+                #print("Guess: P({})={}".format(self.paths_input, guess))
 
                 # go through paths to check guess
                 for path in self.paths:
-                    #print("Path: ", path)
+                    
+                    # print("Path: ", path)
+
                     for i in range( len(path) - 1 ): 
 
                         letter = path[i]
@@ -141,75 +143,115 @@ class BombeMachine:
                         #TODO check when there is more than 1 connection
 
                         # load enigma config
+                        enigma = EnigmaMachine()
                         enigma.load_config_bombe(self.n_rotors, self.rotor_names,
-                                                self.rotor_ring_settings, rotor_positions, self.reflector_name)
-                        
-                        '''
-                        test = "GTTGPQGTIGWN"
-                        for j, t in enumerate(test):
-                            print(j, t, enigma.cipher_letter_bombe(t, 0))
-                        '''
+                                            self.rotor_ring_settings, rotor_positions, self.reflector_name)
 
-                        # P(letter_cipher) = S_pos( P(letter) ) 
-                        plug_letter = plugboard[letter]
-                        plug_letter_cipher = enigma.cipher_letter_bombe(plug_letter, cipher_offset)
+                        enigma.step_rotors()
+                        for co in range(cipher_offset):
+                            #print display
+                            '''
+                            panel = "Display: "
+                            for rotor_name in enigma.rotor_names:
+                                rotor = enigma.rotors[rotor_name]
+                                display = (rotor.position + rotor.ring_setting) % N_LETTERS
+                                panel += "{}({}) ".format(ALPHABET[display], display)
+                            print(panel)
+                            '''
+                            enigma.cipher_letter_bombe('X')
+                            enigma.step_rotors()
 
-                        print("--")
-                        print("{} = P( S_{}( P({}) ) )".format(letter_cipher, cipher_offset, letter))
-                        print("P({}) = S_{}( P({}) ) = S_{}( {} )".format(letter_cipher, cipher_offset, letter, cipher_offset, plug_letter))
-                        print("=> P({}) = {}".format(letter_cipher, plug_letter_cipher))
+                        if ((letter in plugboard) and plugboard_possible): 
+                            plug_letter = plugboard[letter]
+                            plug_letter_cipher = enigma.cipher_letter_bombe(plug_letter)
 
-                        if letter_cipher in self.contradictions:
+                            # P(letter_cipher) = S_pos( P(letter) )
+                            '''
+                            print("--")
+                            print("{} = P( S_{}( P({}) ) )".format(letter_cipher, cipher_offset, letter))
+                            print("P({}) = S_{}( P({}) ) = S_{}( {} )".format(letter_cipher, cipher_offset, letter, cipher_offset, plug_letter))
+                            print("=> P({}) = {}".format(letter_cipher, plug_letter_cipher))
+                            print(plug_letter_cipher)
+                            '''
 
-                            plug_contradictions = self.contradictions[letter_cipher]
+                            if letter_cipher in self.contradictions:
 
-                            if plug_letter_cipher in plug_contradictions:
-                                
-                                # merge with contradictions dictionary
-                                for plug in plugboard:
-                                    plug_cipher = plugboard[plug]
-                                    self.add_contradiction(plug, plug_cipher)
+                                plug_contradictions = self.contradictions[letter_cipher]
 
-                                # not worth keep checking on an inconsistency
-                                plugboard_possible = False
-                                print("\nContradiction previously found!")
-                                print("P({}) = {} causes a contradiction\n".format(letter_cipher, plug_letter_cipher))
-                                break
-                        
-                        if letter_cipher in plugboard:
+                                if plug_letter_cipher in plug_contradictions:
+                                    
+                                    # merge with contradictions dictionary
+                                    for plug in plugboard:
+                                        plug_cipher = plugboard[plug]
+                                        self.add_contradiction(plug, plug_cipher)
 
-                            if (plugboard[letter_cipher] == plug_letter_cipher):
+                                    # not worth keep checking on an inconsistency
+                                    plugboard_possible = False
+                                    '''
+                                    print("\nContradiction previously found!")
+                                    print("P({}) = {} causes a contradiction\n".format(letter_cipher, 
+                                    plug_letter_cipher))
+                                    '''
+                                    break
+                            
+                            if letter_cipher in plugboard:
 
-                                # found end of loop
-                                print("\nEnd of loop reached:")
-                                print("{} = P({}) = {} means path finished\n".format(plugboard[letter_cipher], letter_cipher, plug_letter_cipher))
-                                break
-                            else:
-                                # merge with contradictions dictionary
-                                self.add_contradiction(letter_cipher, plug_letter_cipher)
-                                for plug in plugboard:
-                                    plug_cipher = plugboard[plug]
-                                    self.add_contradiction(plug, plug_cipher)
+                                if (plugboard[letter_cipher] == plug_letter_cipher):
 
-                                # not worth keep checking on an inconsistency
-                                plugboard_possible = False
-                                print("\nInconsistency found:")
-                                print("{} = P({}) = {} is not possible\n".format(plugboard[letter_cipher], letter_cipher, plug_letter_cipher))
-                                break
-                        else: 
-                            plugboard[letter_cipher] = plug_letter_cipher
-                            plugboard[plug_letter_cipher] = letter_cipher
-                    # TODO for now I only check 1 path
+                                    # found end of loop
+                                    '''
+                                    print("\nEnd of loop reached:")
+                                    print("{} = P({}) = {} means path finished\n".format(plugboard[letter_cipher], letter_cipher, plug_letter_cipher))
+                                    '''
+                                    break
+                                else:
+                                    # merge with contradictions dictionary
+                                    self.add_contradiction(letter_cipher, plug_letter_cipher)
+                                    for plug in plugboard:
+                                        plug_cipher = plugboard[plug]
+                                        self.add_contradiction(plug, plug_cipher)
+
+                                    # not worth keep checking on an inconsistency
+                                    plugboard_possible = False
+                                    '''
+                                    print("\nInconsistency found:")
+                                    print("{} = P({}) = {} is not possible\n".format(plugboard[letter_cipher], letter_cipher, plug_letter_cipher))
+                                    '''
+                                    break
+                            else: 
+                                plugboard[letter_cipher] = plug_letter_cipher
+                                plugboard[plug_letter_cipher] = letter_cipher
+                    
+                    if not plugboard_possible:
+                        # avoid path because no assumptions can be made
+                        break
 
                 # Check if it found a good candidate and add it to the list
                 if plugboard_possible:
-                    print("Possible plugboard:")
-                    print(plugboard)
-                    if rotor_positions not in self.possibilities:
-                        self.possibilities[rotor_positions] = [plugboard]
+                    frozen_plugboard = frozenset(plugboard.items())
+                    if frozen_plugboard not in self.possibilities:
+                        self.possibilities[frozen_plugboard] = [rotor_positions]
                     else:
-                        self.possibilities[rotor_positions].append(plugboard)
+                        self.possibilities[frozen_plugboard].append(rotor_positions)
+                    '''
+                    print("Possible plugboard ({}):".format(rotor_positions))
+                    print(frozen_plugboard)
+                    print()
+                    '''
 
-                print("Moving to next guess...\n")
+                #print("Moving to next guess...\n")
+            
+        print("POSSIBLE PLUGBOARDS:\n")
+        total_possible_plugboards = 0
+        for frozen_plugboard in self.possibilities:
+            rotor_positions = self.possibilities[frozen_plugboard]
+            n_possible_plugboards = len(rotor_positions)
+            total_possible_plugboards += n_possible_plugboards
+            print("{}: {}".format(frozen_plugboard, n_possible_plugboards))
+            for rp in rotor_positions:
+                print("- ", rp)
+            print()
 
-            break
+        print("Total possible plugboards+ rotor positions: ", total_possible_plugboards) #6977
+        print("Different possible plugboards: ", len(self.possibilities.keys())) #6917
+

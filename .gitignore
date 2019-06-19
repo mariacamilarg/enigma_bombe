@@ -3,4 +3,4 @@
 *.log
 *.out
 *.gz
-enigma_bombe/enigma/__pycache__/*
+enigma_bombe/src/__pycache__/
