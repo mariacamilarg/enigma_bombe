@@ -5,3 +5,25 @@ TOCTZD
 V IV I
 N D V
 C
+
+X 3 5 21 (D F V) - se ve 3 5 20 (D F U) en la pantalla antes de oprimir la 1ra tecla
+O 3 5 22
+C 3 5 23
+L 3 5 24
+O 3 5 25
+M 3 5 0
+U 3 5 1
+Z 3 5 2
+Z 3 5 3
+L 3 5 4
+P 3 5 5
+H 3 5 6
+
+ATTACKATDAWN
+DI ZL RX UH QK PC VY GA SO EM
+GTTGPQGTIGWN
+ROTORS...
+RSPZSEHLLZCU
+DI ZL RX UH QK PC VY GA SO EM
+XOCLOMUZZLPH
+

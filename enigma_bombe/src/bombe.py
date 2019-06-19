@@ -111,7 +111,8 @@ class BombeMachine:
 
         for rotor_positions in rotor_positions_combinations:
 
-            print("ROTOR POSITIONS: ", rotor_positions)
+            rotor_positions =  "DFU"
+            print("ROTOR POSITIONS: {}\n".format(rotor_positions))
 
             # impossible plugboard connections
             self.contradictions = defaultdict()
@@ -123,7 +124,7 @@ class BombeMachine:
                 plugboard[guess] = self.paths_input
                 plugboard_possible = True
 
-                #print("Guess: P({})={}".format(self.paths_input, guess))
+                print("Guess: P({})={}".format(self.paths_input, guess))
 
                 # go through paths to check guess
                 for path in self.paths:
@@ -142,17 +143,21 @@ class BombeMachine:
                         # load enigma config
                         enigma.load_config_bombe(self.n_rotors, self.rotor_names,
                                                 self.rotor_ring_settings, rotor_positions, self.reflector_name)
+                        
+                        '''
+                        test = "GTTGPQGTIGWN"
+                        for j, t in enumerate(test):
+                            print(j, t, enigma.cipher_letter_bombe(t, 0))
+                        '''
 
                         # P(letter_cipher) = S_pos( P(letter) ) 
                         plug_letter = plugboard[letter]
                         plug_letter_cipher = enigma.cipher_letter_bombe(plug_letter, cipher_offset)
 
-                        '''
+                        print("--")
                         print("{} = P( S_{}( P({}) ) )".format(letter_cipher, cipher_offset, letter))
                         print("P({}) = S_{}( P({}) ) = S_{}( {} )".format(letter_cipher, cipher_offset, letter, cipher_offset, plug_letter))
                         print("=> P({}) = {}".format(letter_cipher, plug_letter_cipher))
-                        print("--")
-                        '''
 
                         if letter_cipher in self.contradictions:
 
@@ -167,25 +172,33 @@ class BombeMachine:
 
                                 # not worth keep checking on an inconsistency
                                 plugboard_possible = False
-                                #print("Contradiction found! Moving to next guess\n")
+                                print("\nContradiction previously found!")
+                                print("P({}) = {} causes a contradiction\n".format(letter_cipher, plug_letter_cipher))
                                 break
                         
                         if letter_cipher in plugboard:
 
-                            # merge with contradictions dictionary
-                            self.add_contradiction(letter_cipher, plug_letter_cipher)
-                            for plug in plugboard:
-                                plug_cipher = plugboard[plug]
-                                self.add_contradiction(plug, plug_cipher)
+                            if (plugboard[letter_cipher] == plug_letter_cipher):
 
-                            # not worth keep checking on an inconsistency
-                            plugboard_possible = False
-                            #print("Inconsistency found! Moving to next guess\n")
-                            break
+                                # found end of loop
+                                print("\nEnd of loop reached:")
+                                print("{} = P({}) = {} means path finished\n".format(plugboard[letter_cipher], letter_cipher, plug_letter_cipher))
+                                break
+                            else:
+                                # merge with contradictions dictionary
+                                self.add_contradiction(letter_cipher, plug_letter_cipher)
+                                for plug in plugboard:
+                                    plug_cipher = plugboard[plug]
+                                    self.add_contradiction(plug, plug_cipher)
+
+                                # not worth keep checking on an inconsistency
+                                plugboard_possible = False
+                                print("\nInconsistency found:")
+                                print("{} = P({}) = {} is not possible\n".format(plugboard[letter_cipher], letter_cipher, plug_letter_cipher))
+                                break
                         else: 
                             plugboard[letter_cipher] = plug_letter_cipher
                             plugboard[plug_letter_cipher] = letter_cipher
-
                     # TODO for now I only check 1 path
 
                 # Check if it found a good candidate and add it to the list
@@ -197,3 +210,6 @@ class BombeMachine:
                     else:
                         self.possibilities[rotor_positions].append(plugboard)
 
+                print("Moving to next guess...\n")
+
+            break

@@ -50,6 +50,7 @@ class Rotor:
             pin_turn = ALPHABET.index(turn)
             self.turnovers.append(pin_turn)
 
+
     def load_config(self, ring_setting_letter, offset_letter):
 
         self.ring_setting = ALPHABET.index(ring_setting_letter) 
@@ -78,6 +79,7 @@ class Rotor:
 
         return turn_left
 
+
     def process_inwards(self, std_in):
         """
         Receives input signal and returns output pin (right to left)
@@ -89,6 +91,7 @@ class Rotor:
 
         return pin_out
 
+
     def process_outwards(self, std_out):
         """
         Receives output signal and returns input pin (left to right)
@@ -99,6 +102,7 @@ class Rotor:
         pin_in = (pin_in - self.position) % N_LETTERS
 
         return pin_in
+
 
 class EnigmaMachine:
 
@@ -264,6 +268,13 @@ class EnigmaMachine:
 
         # calculate ciphered letter
         ciphered_letter = plugboard_letter
+
+        '''
+        print(ciphered_letter, 
+              (self.rotors['V'].position + self.rotors['V'].ring_setting) % N_LETTERS, 
+              (self.rotors['IV'].position + self.rotors['IV'].ring_setting) % N_LETTERS, 
+              (self.rotors['I'].position + self.rotors['I'].ring_setting) % N_LETTERS)
+        '''
         
         return ciphered_letter
     
