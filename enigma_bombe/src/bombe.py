@@ -111,7 +111,7 @@ class BombeMachine:
 
         for rotor_positions in rotor_positions_combinations:
 
-            #rotor_positions =  "DFU"
+            #rotor_positions =  "DZR"
             #print("ROTOR POSITIONS: {}\n".format(rotor_positions))
 
             # impossible plugboard connections
@@ -129,7 +129,7 @@ class BombeMachine:
                 # go through paths to check guess
                 for path in self.paths:
                     
-                    # print("Path: ", path)
+                    #print("Path: ", path)
 
                     for i in range( len(path) - 1 ): 
 
@@ -228,19 +228,24 @@ class BombeMachine:
 
                 # Check if it found a good candidate and add it to the list
                 if plugboard_possible:
-                    frozen_plugboard = frozenset(plugboard.items())
-                    if frozen_plugboard not in self.possibilities:
-                        self.possibilities[frozen_plugboard] = [rotor_positions]
+                    
+                    # TODO: check with the candidate plugboard letters if 
+                    # another part of the message is decoded
+
+                    tuple_plugboard = tuple(sorted(plugboard.items()))
+                    if tuple_plugboard not in self.possibilities:
+                        self.possibilities[tuple_plugboard] = [rotor_positions]
                     else:
-                        self.possibilities[frozen_plugboard].append(rotor_positions)
+                        self.possibilities[tuple_plugboard].append(rotor_positions)
                     '''
-                    print("Possible plugboard ({}):".format(rotor_positions))
-                    print(frozen_plugboard)
+                    print("ROTOR POSITIONS: {}\n".format(rotor_positions))
+                    print("Possible plugboard with guess P({})={}:".format(self.paths_input, guess))
+                    print(tuple_plugboard)
                     print()
                     '''
-
+                    
                 #print("Moving to next guess...\n")
-            
+
         print("POSSIBLE PLUGBOARDS:\n")
         total_possible_plugboards = 0
         for frozen_plugboard in self.possibilities:
@@ -252,6 +257,5 @@ class BombeMachine:
                 print("- ", rp)
             print()
 
-        print("Total possible plugboards+ rotor positions: ", total_possible_plugboards) #6977
+        print("Total possible plugboards + rotor positions: ", total_possible_plugboards) #6977
         print("Different possible plugboards: ", len(self.possibilities.keys())) #6917
-
