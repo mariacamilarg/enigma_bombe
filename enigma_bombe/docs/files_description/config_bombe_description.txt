@@ -1,0 +1,7 @@
+crib cipher text (ex: ATTACKATDAWN)
+crib plain text (ex: XOCLOMUZZLPH)
+number of menu paths to check, ideally loops (ex: 5)
+path1 path2 ... pathn (ex: TOCTZD XALAU KM WP NW) 
+rotor combinations used in this bombe (ex: V IV I)
+rotor ring settings used in this bombe (ex: N D V)
+reflector used in this bombe (ex: C)

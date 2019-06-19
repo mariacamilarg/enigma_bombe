@@ -68,19 +68,9 @@ To understand the code breaking process behind the enigma cipher.
 \end{itemize}
 
 
-\section{Methodology}
+\section{Implementation}
 
-I created 2 different programs within the same project: 
-
-\begin{enumerate}
-	\item The Enigma machine 
-	\item The Bombe machine
-\end{enumerate}
-
-The implementation of both is in Python and it is be publicly available in the GitHub repository \url{https://github.com/mariacamilarg/enigma_bombe}. As for the computational resources, I used only my personal computer (running a Linux O.S.) with standard architecture.
-
-
-\section{Results}
+I implemented a project in Python that replicates both the Enigma Machine and the Bombe Machine. I explain in the following subsections the details of each of them.
 
 \subsection{Enigma Machine}
 
@@ -108,7 +98,25 @@ Finally, I would like to refer as well to different simulators that are found on
 
 \subsection{Bombe Machine}
 
+\subsubsection{Enigma Exploits}
 
+- A letter can never be encrypted to itself, so turing eliminated thousand of permutations
+- some operators forget to change the settings each day, so that lowers the odds
+- breakthrough: the daily weather forecast, everyday the atlantic weather is forecasted from the u boats and everyday it follows the same format (windspeed, atmospheric pressure and temperature), so it's the same message layout
+- they created "cribs" an intelligent guess of part of the code
+- there were typical messages as "weather for the night" "situation eastern channel" "beacons lit as ordered" etc
+- with those typical messages we can scan the transmissions and locate where it is within the text (where no letter ciphers to itself)
+- with all the possible positions we create a set of hypothesis called a menu, a diagram like fig x. from there, we need to fing a enigma configuration that corresponds to the menu. that was the role of the bombe https://www.youtube.com/watch?v=2dKG21u2aSo
+
+
+
+
+
+\section{Discussion}
+
+- historic relevance
+- not only breaking it, it needed strategy, not letting them know they cracked the code
+- 
 
 
 \begin{thebibliography}{10}
@@ -126,6 +134,10 @@ Finally, I would like to refer as well to different simulators that are found on
 	
 % -- bombe --
 	\bibitem{ellsbury} G. Ellsbury. \textit{The Enigma and The Bombe}. Obtained from: \url{http://www.ellsbury.com/enigmabombe.htm}
+	
+% not cited yet
+	\bibitem{numberphile2} Numberphile. \textit{Flaw in the Enigma Code}. YouTube (2013). % https://www.youtube.com/watch?v=V4V2bpZlqx8
+	\bibitem{computerphile} Computerphile. \textit{Tackling Enigma (Turing's Enigma Problem)}. YouTube (2013). % https://www.youtube.com/watch?v=kj_7Jc1mS9k
 \end{thebibliography}
 
 
