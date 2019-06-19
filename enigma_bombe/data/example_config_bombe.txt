@@ -9,6 +9,7 @@ C
 SOLUTION: 
 DZR
 DI ZL RX UH QK PC VY GA SO EM
+config: http://enigma.louisedade.co.uk/enigma.html?m3;c;b541;ANDV;ADYA;AG-CP-DI-EM-HU-KQ-LZ-OS-RX-VY
 
 FOUND:
 (('C', 'P'), ('D', 'I'), ('E', 'M'), ('H', 'U'), ('I', 'D'), ('K', 'Q'), ('L', 'Z'), ('M', 'E'), ('N', 'N'), ('O', 'S'), ('P', 'C'), ('Q', 'K'), ('S', 'O'), ('T', 'T'), ('U', 'H'), ('Z', 'L')): 1

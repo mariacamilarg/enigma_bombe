@@ -5,8 +5,9 @@
 \usepackage[english]{babel}
 \usepackage[latin5]{inputenc}
 \usepackage{hyperref}
-\usepackage[left=3cm,top=3cm,right=3cm,bottom=2cm,nohead,nofoot]{geometry}
+\usepackage[left=3cm,top=3cm,right=3cm,bottom=3cm,nohead,nofoot]{geometry}
 \usepackage{datenumber}
+\usepackage{listings}
 
 \begin{document}
 
@@ -43,7 +44,7 @@ The machine works by a combination of moving rotors and inside wiring as seen in
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.5\textwidth]{img/machine}
+	\includegraphics[width=0.5\textwidth]{../img/machine}
 	\caption{Enigma Machine - Military Edition}
 	\label{fig:machine}
 \end{figure}
@@ -70,17 +71,95 @@ To understand the code breaking process behind the enigma cipher.
 
 \section{Implementation}
 
-I implemented a project in Python that replicates both the Enigma Machine and the Bombe Machine. I explain in the following subsections the details of each of them.
+I implemented a project in the Python programming language that replicates both the Enigma Machine and the Bombe Machine. I explain in the following subsections the details of each of them.
 
 \subsection{Enigma Machine}
 
 There are different models of the Enigma machine that were developed through time. In this project I chose one of the latest, i.e. with more complicated settings. This is the model M3 \& M4 Naval (from Frebuary 1942) that has 8 possible rotors \cite{dade,wikirotors}. 
 
+\subsubsection{Enigma's algorithm}
+The enigma machine consists on a set of physical connections that allow electrical signals to travel through inner cross wirings that move place every time a key is pressed. In the most simple form we could express that any typed key in the keyboard is transformed to another letter that lights up in the bulbs panel. So we could say: 
+
+$$\rm{SIGNAL_{OUT}} = P( S ( P(\rm{SIGNAL_{IN}}) ) )$$
+
+$$S(\rm{SIGNAL}) = R_1(R_2(R_3(F(R_3(R_2(R_1(\rm{SIGNAL})))))))$$
+
+Where $P$ represents the Plugboard; $S$ represents the Set of rotors an reflectors; $R_i$ represents the i-th rotor (in this case there are 3 but there could be more); and $F$ represents the reflector. All of this process can be graphically understood with the image below (Fig. \ref{fig:wiring}): 
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.55\textwidth]{../img/wiring_example}
+	\caption{Enigma Machine Wiring}
+	\label{fig:wiring}
+\end{figure}
+
+The machine has a symmetric property so in order to decipher the message one has to put the same rotor settings as when the person typing the message started. So this leads us to the configuration of the machine, i.e. the input. 
+
 \subsubsection{Input}
+The machine has different settings that changed each day and that were communicated via code sheets like the one in Fig. \ref{fig:code_sheet}. 
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{../img/code_sheet_example}
+	\caption{Enigma Machine Wiring}
+	\label{fig:code_sheet}
+\end{figure}
+
+I handle this as a configuration text file in my implementation. I will describe the components as follows: 
+
+\begin{itemize}
+	\item Rotor selection and order: Depending on the machine there are up to 8 different rotors (I-VIII) from which to choose 3 or 4. So an input is which of them and in which permutation from left to right. Example - V IV I.
+	\item Rotor's ring settings (\textit{Ringstellung}): Within each rotor there is an internal ring that maps position to a letter, but it can be switched so that the internal wiring mapping is offset. Example - N D V.
+	\item Rotor's initial positions (\textit{Grundstellung}): Within the machine, when locating the rotors, they have to be in a particular initial position. This is achieved by inserting the rotor and turning it to the respective starting point. Example: D Y A.
+	\item Plugboard pairs: This corresponds to the symmetric correspondence of letters in the other plugboard panel. They are typically 10 pairs. 
+	\item Reflector selection: As with the rotors, there are 4 different reflectors from which to choose, all with different cross-connections. 
+\end{itemize}
+
+Apart from all of these values that changes from user to user, I also have an input configuration file that loads the historically accurate wiring of each reflector and rotor. For the rotors there is an additional parameter called the turnover point. The rotors work as a clock in the way they rotate. The right-most represent the second, the middle the minutes, and the left-most the hours. However they don't turn all in the same letter ('Z' as one would expect), they all each have their own turnover point that triggers its right partner rotation. Those turnovers are obtained from \cite{wiki}. Finally the message to cipher is also input as a text file. \\
 
 \subsubsection{Processing}
+As for the processing of the plain text, here is a pseudo code with the simplified process:
+
+\begin{lstlisting}[language=Python]
+
+for letter in text:
+
+	# advance rotors according to their own position,
+	# and turnover points
+	step_rotors()
+	
+	# enter plugboard switch, if no correspondance there 
+	# is no connection, so letter doesn't change
+	plugboard_letter = plugboard.get(letter, letter)
+	
+	# enter rotors (inwards - right to left)
+	rotor_names_inverted = rotor_names[::-1]
+	pin_in = ALPHABET.index(plugboard_letter)
+	
+	for rotor_name in rotor_names_inverted:
+		rotor = rotors[rotor_name]
+		pin_in = rotor.process_inwards(pin_in)
+	
+	# enter reflector
+	pin_out = reflector.reflect(pin_in)
+	
+	# enter rotors (outwards - left to right)
+	for rotor_name in rotor_names:
+		rotor = rotors[rotor_name]
+		pin_out = rotor.process_outwards(pin_out)
+	
+	# enter plugboard switch
+	rotor_letter = ALPHABET[pin_out]
+	
+	# calculate ciphered letter
+	ciphered_letter = plugboard.get(rotor_letter, rotor_letter)
+	
+\end{lstlisting}
+
+Somethings to be aware of in the processing are that the rotors step before ciphering, not after. Also, the turnover points need to be checked each time the rotors step, some of them  even have 2 different turnovers. 
 
 \subsubsection{Output}
+The output of the machine is straightforward, it correspond to the cipher letter of each key press after going through the transformations. And for a whole text is just the concatenation of those letters. If this output is to be typed again in the machine with the same initial configuration, the operator on the other side of the line will obtain the original plain message. \\
 
 \subsubsection{Challenges}
 
@@ -96,27 +175,71 @@ Finally, I would like to refer as well to different simulators that are found on
 \end{itemize}
 
 
+
 \subsection{Bombe Machine}
 
 \subsubsection{Enigma Exploits}
 
-- A letter can never be encrypted to itself, so turing eliminated thousand of permutations
-- some operators forget to change the settings each day, so that lowers the odds
-- breakthrough: the daily weather forecast, everyday the atlantic weather is forecasted from the u boats and everyday it follows the same format (windspeed, atmospheric pressure and temperature), so it's the same message layout
-- they created "cribs" an intelligent guess of part of the code
-- there were typical messages as "weather for the night" "situation eastern channel" "beacons lit as ordered" etc
+In order to break the enigma, mathematicians Alan Turing and Gordon Welchman, with the collaboration of the staff at Bletchley Park, design the Bombe Machine. It exploited the Enigma Machine's flaws to crack the Nazi's communications. However, the machine itself was not all, it exploited behavioral patterns in the communication as well. Here I list the main weaknesses that lead to deciphering the Enigma:
+
+\begin{itemize}
+	\item The biggest flaw of the Enigma Machine is that because of the internal wiring and design, a letter can never be encrypted to itself. This opened the door to cryptoanalysts to locate possible message deciphers. \cite{numberphile2}
+	\item Another breakthrough was when they realized about specific patterns that would repeat themselves in a conversation. For example the daily weather forecast, the heil Hitler salute, or war jargon. These parts of the conversation tipically followed a standard format that allows to create "cribs", an intelligent guess of part of the code. \cite{computerphile}
+	% ex: "weather for the night" "situation eastern channel" "beacons lit as ordered" etc
+	\item In addition to the previous facts, sometimes reckless operators forgot to change the daily settings, which lower the odds of combinations and gave more data to the analysts.
+	
+\end{itemize}
+
+\subsubsection{Bombe's algorithm}
+
 - with those typical messages we can scan the transmissions and locate where it is within the text (where no letter ciphers to itself)
+
 - with all the possible positions we create a set of hypothesis called a menu, a diagram like fig x. from there, we need to fing a enigma configuration that corresponds to the menu. that was the role of the bombe https://www.youtube.com/watch?v=2dKG21u2aSo
 
+\subsubsection{Input}
+
+\subsubsection{Processing}
+
+\subsubsection{Output}
+
+\subsubsection{Challenges}
+
+-getting info, very sensitive, most of it classified. Some of it released in 2010, less than 10 years ago
+-less than 200 bombes, as opposed to enigma machines that were even commercial
+
+...
+
+Finally, and as in the previous step, I got some insights from two Bombe simulators online. However as the is very complex, using them is not as straightforward and required a lot of learning. After all, each bomb had several operators. So I just had a glimpse on their configuration files, specially the menu input. Here are the references: 
+
+\begin{itemize}
+	\item Ekhall \& Hallenberg Simulator: \url{http://www.lysator.liu.se/~koma/turingbombe/} \cite{ekhall}
+	\item 101 Computing Simulator: \url{https://www.101computing.net/turing-welchman-bombe/}
+\end{itemize}
 
 
+\subsection{Code}
+The code of both machines is available in the project attached to this report. The structure is as follows: 
+
+PICTURE OF CODE STRUCTURE
+
+There is a program called \texttt{example.py} that shows how to use the programs and when executed, outputs the result of both enigma and bombe machines to their respective results files. It also outputs to console like this: 
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../img/code_stdout}
+	\caption{Example Code Standard Output}
+	\label{fig:code_stdout}
+\end{figure}
 
 
 \section{Discussion}
 
 - historic relevance
 - not only breaking it, it needed strategy, not letting them know they cracked the code
-- 
+- conclusions, goals achieved
+
+\subsection{Future Work}
+
 
 
 \begin{thebibliography}{10}
@@ -134,10 +257,12 @@ Finally, I would like to refer as well to different simulators that are found on
 	
 % -- bombe --
 	\bibitem{ellsbury} G. Ellsbury. \textit{The Enigma and The Bombe}. Obtained from: \url{http://www.ellsbury.com/enigmabombe.htm}
-	
-% not cited yet
 	\bibitem{numberphile2} Numberphile. \textit{Flaw in the Enigma Code}. YouTube (2013). % https://www.youtube.com/watch?v=V4V2bpZlqx8
 	\bibitem{computerphile} Computerphile. \textit{Tackling Enigma (Turing's Enigma Problem)}. YouTube (2013). % https://www.youtube.com/watch?v=kj_7Jc1mS9k
+	\bibitem{ekhall} M. Ekhall, F. Hallenberg. \textit{US Navy Cryptanalytic Bombe - A Theory of Operation and Computer Simulation}. Proceedings of the 1st Conference on Historical Cryptology, pages 103-108,	Uppsala, Sweden, 18-20 June, 2018.
+	
+	
+	
 \end{thebibliography}
 
 

@@ -1,5 +1,0 @@
-ENIGMA:
-
-- I'm not using the last part of the code sheet (Kenngruppen) for now. More info here: http://users.telenet.be/d.rijmenants/en/enigmaproc.htm and http://cryptocellar.org/bgac/KM-IndicatingSystem.pdf
-- Reflectors from this website: http://users.telenet.be/d.rijmenants/en/enigmatech.htm#reflector
-- Example: https://www.codesandciphers.org.uk/enigma/example1.htm
