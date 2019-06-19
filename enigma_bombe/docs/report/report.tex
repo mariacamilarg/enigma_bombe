@@ -4,7 +4,7 @@
 \usepackage{epstopdf}
 \usepackage[english]{babel}
 \usepackage[latin5]{inputenc}
-\usepackage{hyperref}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
 \usepackage[left=3cm,top=3cm,right=3cm,bottom=3cm,nohead,nofoot]{geometry}
 \usepackage{datenumber}
 \usepackage{listings}
@@ -40,13 +40,13 @@ Advisor: Prof. Eric RENAULT
 
 The enigma machine is a cipher machine used by the Nazi Germany during World War II in order to send secret coded messages. It was initially a commercial machine bought by banks are businesses. But then the military took it and added an extra security layer called plugboard. It was innovative at the time because it was not a substitution cipher, i.e. the same letter can get different results after encryption. \\
 
-The machine works by a combination of moving rotors and inside wiring as seen in Fig. \ref{fig:machine}. The way to use it is that when the sender types a message, a bulb lights up indicating the correspondent coded letter. Then, in order to decode, the receiver types the coded message he received and the initial message lights up on the board. In war times the coded messages were transmitted over morse code. \\
+The machine works by a combination of moving rotors and inside wiring as seen in Fig. \ref{fig:enigma_machine}. The way to use it is that when the sender types a message, a bulb lights up indicating the correspondent coded letter. Then, in order to decode, the receiver types the coded message he received and the initial message lights up on the board. In war times the coded messages were transmitted over morse code. \\
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.5\textwidth]{../img/machine}
+	\includegraphics[width=0.5\textwidth]{../img/enigma_machine}
 	\caption{Enigma Machine - Military Edition}
-	\label{fig:machine}
+	\label{fig:enigma_machine}
 \end{figure}
 
 In the military version of the Enigma Machine there were 5 possible rotors to pick from, each with 26 possible positions, then there were 10 possible switching in the plugboard that could choose a pair from the available 26 letters. That accounts for $158962555217826360000$ different combinations for
@@ -88,7 +88,7 @@ Where $P$ represents the Plugboard; $S$ represents the Set of rotors an reflecto
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.55\textwidth]{../img/wiring_example}
+	\includegraphics[width=0.5\textwidth]{../img/wiring_example}
 	\caption{Enigma Machine Wiring}
 	\label{fig:wiring}
 \end{figure}
@@ -152,7 +152,8 @@ for letter in text:
 	rotor_letter = ALPHABET[pin_out]
 	
 	# calculate ciphered letter
-	ciphered_letter = plugboard.get(rotor_letter, rotor_letter)
+	ciphered_letter = plugboard.get(rotor_letter, 
+					rotor_letter)
 	
 \end{lstlisting}
 
@@ -192,37 +193,99 @@ In order to break the enigma, mathematicians Alan Turing and Gordon Welchman, wi
 
 \subsubsection{Bombe's algorithm}
 
-- with those typical messages we can scan the transmissions and locate where it is within the text (where no letter ciphers to itself)
+So the idea of the Bombe is to try have several enigma machines in parallel (as seen in Fig. \ref{fig:bombe_machine}), each one testing its own setting, but in a smart and optimizing manner. Utilizing all the previous known exploits, as well as mathematical inferences and principles of conditional sequential bayesian probability. \\
 
-- with all the possible positions we create a set of hypothesis called a menu, a diagram like fig x. from there, we need to fing a enigma configuration that corresponds to the menu. that was the role of the bombe https://www.youtube.com/watch?v=2dKG21u2aSo
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.7\textwidth]{../img/bombe_machine}
+	\caption{Bombe Machine at Bletchley Park}
+	\label{fig:bombe_machine}
+\end{figure}
+
+To begin we need a \textit{crib}, that is a message and its most-likely cipher. This was obtained by comparing the common phrases and finding where in the cipher text no letter maps to itself. With the crib we create then a hypothesis called a \textit{menu}, an analog of a computer program for the Bombe. The menu represents a graph where each links connects 2 nodes that can be translated to each other via the enigma, in that particular position. Fig \ref{fig:map} displays what the crib and map would be for our example in the project. 
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.75\textwidth]{../img/map}
+	\caption{Bombe Map Graph}
+	\label{fig:map}
+\end{figure}
+
+Now we need to find an enigma configuration that corresponds to the menu, and here is where the plugboard comes into place. The Bombe starts by taking a letter of the graph, called input and making a guess of its corresponding pair in the plugboard (ex: $P(T)=A$). From there, it starts to follow the paths on the graph, specially the loops, and starts finding that the guess implies other connections in the board. If we end up with a contradiction then our guess is wrong and we move to the next guess. If by the end all the guesses are wrong, then the rotor configuration is wrong. \\
+
+Alan Turing was able to decrease the time by proving that if the Bombe finds a contradiction, then all the previous guesses are also wrong, so the machine doesn't have to check them again. He also design the machine so that the circuits could calculate the correspondences immediately. \\
+
+Let's look at an example of one of these possible deductions:
+
+\begin{enumerate}
+	\item I suppose $P(T)=A$
+	\item I know that $M = P(S_0(P(T)))$ because of the crib
+	\item As P is symmetrical, I can apply it to both sides so $P(M) = S_0(P(T))$ 
+	\item Using my guess I find that $P(M) = S_0(A)$ 
+	\item According to my enigma replica, that is $P(M) = F$, so now I have another plugboard setting. 
+	\item Following the loop and doing the same operations, I find that $I = P(S_6(P(M)))$
+	\item Applying P on both sides $P(I) = S_6(P(M))$
+	\item Using the previously found setting $P(I) = S_6(F)$
+	\item Using the enigma machine $P(I) = Y$, and that is my third plugboard setting
+	\item Now to close the loop I also know that $T = P(S_{14}(P(I)))$
+	\item Applying P on both sides $P(T) = S_{14}(P(I))$
+	\item Using the plugboard $P(T) = S_{14}(Y)$
+	\item Using the enigma machine $P(T) = K$, BUT here lies a problem, I guessed $P(T)=A$ so I found a contradiction
+\end{enumerate}
+
+Here all the previous guesses are now invalid for the current rotor configuration and I have to go to the next guess and repeat. As seen in the example, and proved my Alan Turing, the most loops the easier it is to find contradictions, i.e. the less possible plugboards to check. Here is a table (Fig. \ref{fig:loops})that shows this relation \cite{wikibombe}.\\
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{../img/loops}
+	\caption{Estimated number of bombe stops per rotor order}
+	\label{fig:loops}
+\end{figure}
+
+Now, when a plugboard is consistent it becomes a candidate and it was then checked by hand at the park. 
 
 \subsubsection{Input}
+I handle the input as a configuration text file in my implementation. I will describe the components as follows: 
+
+\begin{itemize}
+	\item Crib: The piece of text plain and ciphered that was selected as a candidate by the staff.
+	\item Menu paths: The menu paths in the order that the program will follow, and create the deductions. It starts with the input letter and it it preferable to have all the loops at first, in order to reject combinations faster. 
+	\item Rotor's selection and order: This because the Bombe runs several rotor combinations in parallel, so in my implementation I input the rotors. They had several Bombes working at the same time as well. 
+	\item Initial rotor ring settings and reflector: This is for simplicity of the program. Again, in the big Bombe all the combinations are tested. 
+\end{itemize}
+
 
 \subsubsection{Processing}
+The processing implements all the algorithm explained before within the function \texttt{run()}. It is important to remark the high use of Python dictionaries (i.e. hash tables) as a data structure. They make the access to the plugboards and settings straightforward, as opposed to searching on a list. 
 
 \subsubsection{Output}
+The output of the machine is all the possible plugboards associated to each rotor configuration. This is output to a file that was then checked by the staff. They translated the message using those configurations and see which one made sense. From the example we can see that the program outputs DZR and the plugboard that the machine used to cipher. So it cracked it. \\
 
 \subsubsection{Challenges}
 
--getting info, very sensitive, most of it classified. Some of it released in 2010, less than 10 years ago
--less than 200 bombes, as opposed to enigma machines that were even commercial
+As well as for the Enigma, the biggest challenge in implementing the Bombe machine is knowing exactly how it worked. As opposed to Enigma that was a commercial machine and that had over $100000$ replicas, the Bombe information was kept secret for a very long time. There are no more than 200 Bombes in the world and less than 5 are rebuilt and operational. Most of the information for the plans was kept classified until 2010, not even 10 years ago. So it was very challenging to get to the nuts and bolts of the apparatus. However, when combining all the reliable sources I was able to make this compendium and to understand how it worked. I put in the references the most trustworthy and complete information \cite{ellsbury,wikibombe,leblob,101computing,salebombe,carter,oberzalek,wikibanburismus}. \\
 
-...
+Another remark that also opposes to the Enigma is the lenght of the Bombe. There are much more steps deductions and in general code that needs to be written. While implementing it, it is evident why the Bombe was so much more complicated, expensive and large. \\
 
-Finally, and as in the previous step, I got some insights from two Bombe simulators online. However as the is very complex, using them is not as straightforward and required a lot of learning. After all, each bomb had several operators. So I just had a glimpse on their configuration files, specially the menu input. Here are the references: 
+Finally, and as in the previous machine, I got some insights from two Bombe simulators online. However as the is very complex, using them is not as straightforward and required a lot of learning. After all, each bomb had several operators. So I just had a glimpse on their configuration files, specially the menu input. Here are the references: 
 
 \begin{itemize}
-	\item Ekhall \& Hallenberg Simulator: \url{http://www.lysator.liu.se/~koma/turingbombe/} \cite{ekhall}
+	\item Magnus Ekhall \& Fredrik Hallenberg Simulator: \url{http://www.lysator.liu.se/~koma/turingbombe/} \cite{ekhall}
 	\item 101 Computing Simulator: \url{https://www.101computing.net/turing-welchman-bombe/}
 \end{itemize}
 
 
 \subsection{Code}
-The code of both machines is available in the project attached to this report. The structure is as follows: 
+All of the algorithms, inputs, outputs and processing were coded in Python. The code of both machines is available in the project attached to this report. The structure can be seen in Fig. \ref{fig:code_structure}.\\
 
-PICTURE OF CODE STRUCTURE
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.4\textwidth]{../img/code_structure}
+	\caption{Code Structure}
+	\label{fig:code_structure}
+\end{figure}
 
-There is a program called \texttt{example.py} that shows how to use the programs and when executed, outputs the result of both enigma and bombe machines to their respective results files. It also outputs to console like this: 
+There is a program called \texttt{example.py} that shows how to use the programs and when executed, outputs the result of both enigma and bombe machines to their respective results files. It also outputs to console like Fig. \ref{fig:code_stdout}. 
 
 \begin{figure}[h!]
 	\centering
@@ -232,14 +295,19 @@ There is a program called \texttt{example.py} that shows how to use the programs
 \end{figure}
 
 
-\section{Discussion}
+\section{Conclusions}
 
-- historic relevance
-- not only breaking it, it needed strategy, not letting them know they cracked the code
-- conclusions, goals achieved
+From this  project I was able to make the following conclusions and achievements: 
+
+\begin{itemize}
+	\item I was able to understand to a deep level and to replicate the code ciphering and code breaking process behind the Enigma and Bombe machines. I am personally amazed by the ability of cryptoanalysts to find a door to break what everyone thought was impossible.
+	\item I was able to  understand the effect of mathematics in this particular case. I understood the probabilites and the deduction techniques in order to find a viable solution. This is in my opinion one of the most relevant examples in history were mathematicians can save lives. It's just another proof that research in basic sciences are the foundation for application way beyond the current scope of humanity. 
+	\item I was able to understand than even though deciphering the message was a very hard task, in order to win the war you needed much more. There were a lot of difficult decisions that had to be made so that the Nazis didn't realize the machine was cracked. A lot of lives that were sacrificed on purpose in order to win. The strategy goes beyond the cipher.  
+	\item I conclude that is by implementing that you deeply understand something. I had and idea about the machines, but it is when trying to replicate them that you start to see all the subtleties, details and complexities that rely within. This was a very fructiferous project to make.
+\end{itemize}
 
 \subsection{Future Work}
-
+The future work I would like to perform after this class is to improve the Bombe so that it runs in parallel (just as the machines at Bletchley Park). I would like to learn deeper about the physical wirings and connections inside the Bombe that made it so fast. Then, it would be really interesting to create a physical system with current electronics and compare the times. 
 
 
 \begin{thebibliography}{10}
@@ -260,7 +328,13 @@ There is a program called \texttt{example.py} that shows how to use the programs
 	\bibitem{numberphile2} Numberphile. \textit{Flaw in the Enigma Code}. YouTube (2013). % https://www.youtube.com/watch?v=V4V2bpZlqx8
 	\bibitem{computerphile} Computerphile. \textit{Tackling Enigma (Turing's Enigma Problem)}. YouTube (2013). % https://www.youtube.com/watch?v=kj_7Jc1mS9k
 	\bibitem{ekhall} M. Ekhall, F. Hallenberg. \textit{US Navy Cryptanalytic Bombe - A Theory of Operation and Computer Simulation}. Proceedings of the 1st Conference on Historical Cryptology, pages 103-108,	Uppsala, Sweden, 18-20 June, 2018.
-	
+	\bibitem{wikibombe} Wikipedia. \textit{Bombe}. Obtained from: \url{https://en.wikipedia.org/wiki/Bombe}
+	\bibitem{leblob} Le Blob. \textit{La "bombe" de Turing : vers le décryptage industriel}. YouTube (2017). % https://www.youtube.com/watch?v=2dKG21u2aSo
+	\bibitem{101computing} 101 Computing. \textit{Enigma Crib Analysis}. Obtained from: \url{https://www.101computing.net/enigma-crib-analysis/}
+	\bibitem{salebombe} T. Sale. \textit{Virtual Wartime Bletchley Park}. Obtained from: \url{http://www.codesandciphers.org.uk/virtualbp/tbombe/tbombe.htm}
+	\bibitem{carter} F. Carter. \textit{The Turing Bombe}. Rutherford Journal. Obtained from: \url{http://www.rutherfordjournal.org/article030108.html}
+	\bibitem{oberzalek} M. Oberzalek. \textit{Breaking the Enigma}. Obtained from: \url{http://www.mlb.co.jp/linux/science/genigma/enigma-referat/node6.html}	
+	\bibitem{wikibanburismus} Wikipedia. \textit{Banburismus}. Obtained from: \url{https://en.wikipedia.org/wiki/Banburismus}
 	
 	
 \end{thebibliography}
